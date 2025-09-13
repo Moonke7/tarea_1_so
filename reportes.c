@@ -54,8 +54,6 @@ int main(){
         exit(1);
     }
 
-    printf("Pipes de reportes listos. Esperando reportes...\n");
-
     char buffer[100];
     Report *reports = malloc(10 * sizeof(Report));
     int reports_count = 0;
@@ -81,8 +79,7 @@ int main(){
                     reports[i].report_count++;
                     found = 1;
                     index_reported = i;
-                    printf("Usuario %d ya reportado antes. Total: %d\n", 
-                           reported_pid, reports[i].report_count);
+                    printf("Usuario %d ya reportado antes. Total: %d\n", reported_pid, reports[i].report_count);
                     break;
                 }
             }
@@ -104,16 +101,13 @@ int main(){
                 reports[reports_count].report_count = 1;
                 index_reported = reports_count;
                 reports_count++;
-                
-                printf("Nuevo usuario reportado: %d (total usuarios con reportes: %d)\n", 
-                       reported_pid, reports_count);
             }
 
             // obtener número actual de reportes
             int current_reports = reports[index_reported].report_count;
 
             // verificar la cantidad de reportes
-            if (current_reports >= 1) {
+            if (current_reports > 10) {
                 // bloquear al usuario
                 kick_user(reported_pid);
                 
@@ -128,14 +122,12 @@ int main(){
 
                 // enviar confirmación de eliminación
                 char report_msg[100];
-                snprintf(report_msg, sizeof(report_msg), "Usuario %d kickeado por %d reportes\n", 
-                         reported_pid, current_reports);
+                snprintf(report_msg, sizeof(report_msg), "Usuario %d kickeado por %d reportes\n", reported_pid, current_reports);
                 write(fd_out, report_msg, strlen(report_msg));
             } else {
                 // enviar reporte normal a la central
                 char report_msg[100];
-                snprintf(report_msg, sizeof(report_msg), "Usuario %d reportado, %d reportes\n", 
-                         reported_pid, current_reports);
+                snprintf(report_msg, sizeof(report_msg), "Usuario %d reportado, %d reportes\n", reported_pid, current_reports);
                 write(fd_out, report_msg, strlen(report_msg));
             }
         }

@@ -16,7 +16,6 @@ typedef struct {
     int fd_in;
     int fd_out; 
     int active;
-    int error_count;
     char pipe_in_name[50];
     char pipe_out_name[50];
 } User;
@@ -36,7 +35,6 @@ int add_user(User **users, int *user_count, int *capacity, int pid) {
     // inicializar al usuario nuevo
     User *user = &(*users)[*user_count];
     user->pid = pid;
-    user->error_count = 0; 
     user->active = 0;      
     
     sprintf(user->pipe_in_name, "user_%d_out", pid);
@@ -46,7 +44,7 @@ int add_user(User **users, int *user_count, int *capacity, int pid) {
     user->fd_out = open(user->pipe_out_name, O_WRONLY | O_NONBLOCK);
     
     if (user->fd_in < 0 || user->fd_out < 0) {
-        user->error_count++;
+        /* user->error_count++;
         printf("Error count %d\n", user->error_count);
         
         if (user->error_count >= 5) {
@@ -58,7 +56,7 @@ int add_user(User **users, int *user_count, int *capacity, int pid) {
             
             unlink(user->pipe_in_name);
             unlink(user->pipe_out_name);
-        }
+        } */
         return -1;
     }
     
@@ -85,7 +83,8 @@ void scan_for_new_pipes(User users[], int *user_count) {
                     }
                 }
                 if (!found) {
-                    add_user(&users, user_count, pid);
+                    static int capacity = 10;
+                    add_user(&users, user_count, &capacity, pid);
                 }
             }
         }
