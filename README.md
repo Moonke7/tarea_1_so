@@ -62,4 +62,5 @@ Para el correcto funcionamiento, el orden de ejecucion debe ser:
 - Proceso de reportes
 - Central
 - Usuario/s
-  Ademas, para terminar un proceso se recomienda utilizar el comando /exit en lugar de cntrl+c. Esto con el fin eliminar los archivos correctamente
+
+Ademas, para terminar un proceso de usuario se recomienda utilizar el comando /exit en lugar de cntrl+c. Esto con el fin eliminar los archivos correctamente
