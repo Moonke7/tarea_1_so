@@ -55,3 +55,10 @@ Como se dijo anteriormente, este código consta de 3 programas independientes, d
   - **/clone**: Este comando hace un fork del proceso y lo ejecuta en una terminal aparte usando el comando 'gnome'. De esta forma, se creará un usuario con exactamente las mismas funciones que el original, pero independiente del mismo, manteniendo pid y terminal propia.
   
   En caso de que no sea ninguno de estos comandos, simplemente se enviará el mensaje a la central, donde esta lo reenviará a los demás usuarios.
+
+## Consideraciones
+
+Para el correcto funcionamiento, el orden de ejecucion debe ser:
+- Proceso de reportes
+- Central
+- Usuario/s
