@@ -13,28 +13,31 @@
 
 typedef struct {
     int pid;
-    int fd_in;   // Central lee de user_PID_out
-    int fd_out;  // Central escribe a user_PID_in
+    int fd_in;
+    int fd_out; 
     int active;
     int error_count;
     char pipe_in_name[50];
     char pipe_out_name[50];
 } User;
 
-// funcion para añadir usuarios
-int add_user(User **users, int *user_count, int pid) {
-    if (*user_count >= 10) {
-        // se aumenta el limite de usuarios
-        users = realloc(users, (*user_count + 10) * sizeof(User));
-
-        if (users == NULL) {
-            printf("Error al aumentar el tamaño de usuarios \n");
+int add_user(User **users, int *user_count, int *capacity, int pid) {
+    // verificar que haya espacio
+    if (*user_count >= *capacity) {
+        *capacity += 10;
+        User *temp = realloc(*users, (*capacity) * sizeof(User));
+        if (temp == NULL) {
+            printf("Error al aumentar el tamaño de usuarios\n");
             return -1;
         }
+        *users = temp;
     }
-
+    
+    // inicializar al usuario nuevo
     User *user = &(*users)[*user_count];
     user->pid = pid;
+    user->error_count = 0; 
+    user->active = 0;      
     
     sprintf(user->pipe_in_name, "user_%d_out", pid);
     sprintf(user->pipe_out_name, "user_%d_in", pid);
@@ -43,11 +46,16 @@ int add_user(User **users, int *user_count, int pid) {
     user->fd_out = open(user->pipe_out_name, O_WRONLY | O_NONBLOCK);
     
     if (user->fd_in < 0 || user->fd_out < 0) {
-        user->error_count += + 1;
-        printf("error count %d\n", user->error_count);
+        user->error_count++;
+        printf("Error count %d\n", user->error_count);
+        
         if (user->error_count >= 5) {
             printf("Error abriendo pipes para usuario %d. Demasiados errores, eliminando usuario.\n", pid);
             user->active = 0;
+            
+            if (user->fd_in >= 0) close(user->fd_in);
+            if (user->fd_out >= 0) close(user->fd_out);
+            
             unlink(user->pipe_in_name);
             unlink(user->pipe_out_name);
         }

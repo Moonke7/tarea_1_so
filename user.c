@@ -6,16 +6,13 @@
 #include <sys/stat.h>
 
 int main() {
-    // 1. Crear pipes únicos basados en PID actual
     char pipe_out[50], pipe_in[50];
     sprintf(pipe_out, "user_%d_out", getpid());
     sprintf(pipe_in, "user_%d_in", getpid());
     
-    // 2. Crear los FIFOs
     mkfifo(pipe_out, 0666);
     mkfifo(pipe_in, 0666);
     
-    // 3. Abrir FIFOs
     int fd_out = open(pipe_out, O_WRONLY);
     int fd_in = open(pipe_in, O_RDONLY);
     
@@ -69,7 +66,7 @@ int main() {
         if (strcmp(msg, "/clone\n") == 0) {
             printf("Creando un nuevo usuario...\n");
             if (fork() == 0) {
-                // Proceso hijo: abrir nueva terminal
+                // abriendo el hijo en una nueva terminal
                 system("gnome-terminal -- ./user &");
                 exit(0);
             }
