@@ -50,11 +50,8 @@ Como se dijo anteriormente, este código consta de 3 programas independientes, d
   - user_{pid}_in  
 
   Para luego crear y abrir los fifos de dichos pipes. Luego, se hará un fork con el fin de tener un proceso hijo encargado únicamente de escuchar los mensajes que lleguen desde la central. Por otro lado, el proceso padre será el encargado de leer los mensajes de teclado y enviarlos hacia la central a través de fd_out (fifo de salida). Sin embargo, antes de enviar el mensaje a la central, verificará si el usuario escribió alguno de los siguientes comandos: 
-| Comando        | Argumento   | Descripción                                                                                       |
-|----------------|-------------|---------------------------------------------------------------------------------------------------|
-| **/exit**      | Ninguno     | Cierra los fifos y los elimina del directorio, para luego terminar el proceso.                    |
-| **/report**    | `{pid}`     | Recibe como argumento el pid del proceso a reportar y envía el reporte a la central en un formato fácil de identificar. |
-| **/clone**     | Ninguno     | Hace un fork del proceso y lo ejecuta en una terminal aparte usando el comando `gnome`. Crea un usuario con las mismas funciones que el original, pero independiente, con su propio pid y terminal. |
-
+  - **/exit**: Este comando cerrará los fifos y los eliminará del directorio, para luego terminar el proceso.
+  - **/report {pid}**: Este comando recibe como argumento el pid del proceso a reportar y es el encargado de enviarle el reporte a la central con un formato más fácil de identificar. 
+  - **/clone**: Este comando hace un fork del proceso y lo ejecuta en una terminal aparte usando el comando 'gnome'. De esta forma, se creará un usuario con exactamente las mismas funciones que el original, pero independiente del mismo, manteniendo pid y terminal propia.
   
   En caso de que no sea ninguno de estos comandos, simplemente se enviará el mensaje a la central, donde esta lo reenviará a los demás usuarios.
